@@ -1,0 +1,22 @@
+package br.com.workflow.rest;
+
+import jakarta.inject.Inject;
+import jakarta.ws.rs.GET;
+import jakarta.ws.rs.Path;
+import jakarta.ws.rs.core.Response;
+
+import br.com.workflow.service.RequestService;
+
+/**
+ * RequestResource
+ */
+@Path("/request")
+public class RequestResource {
+    @Inject
+    private RequestService service;
+
+    @GET
+    public Response list(){
+        return Response.ok(service.getMessage()).build();
+    }
+}
