@@ -61,6 +61,12 @@
                 <version>3.4.0</version>
             </plugin>
 
+            <plugin>
+                <groupId>org.wildfly.plugins</groupId>
+                <artifactId>wildfly-maven-plugin</artifactId>
+                <version>4.2.2.Final</version>
+            </plugin>
+
         </plugins>
     </build>
 
