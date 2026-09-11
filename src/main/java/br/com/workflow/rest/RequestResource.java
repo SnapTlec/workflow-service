@@ -2,9 +2,11 @@ package br.com.workflow.rest;
 
 import jakarta.inject.Inject;
 import jakarta.ws.rs.GET;
+import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.core.Response;
 
+import br.com.workflow.dto.RequestDTO;
 import br.com.workflow.service.RequestService;
 
 /**
@@ -17,6 +19,12 @@ public class RequestResource {
 
     @GET
     public Response list(){
-        return Response.ok(service.getMessage()).build();
+        return Response.ok(service.getRequests()).build();
+    }
+
+    @POST 
+    public Response gravarRequest(RequestDTO req){
+
+        return Response.ok(service.createtRequest(req)).build();
     }
 }
