@@ -3,9 +3,12 @@ package br.com.workflow.service;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.imageio.spi.ServiceRegistry;
+
 import br.com.workflow.dto.RequestDTO;
 import br.com.workflow.entity.Request;
 import br.com.workflow.entity.RequestStatus;
+import br.com.workflow.entity.ServiceResponse;
 import br.com.workflow.mapper.RequestMapper;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
@@ -22,16 +25,25 @@ public class RequestService {
         return requests;
     }
 
-    public Boolean createtRequest(RequestDTO request){
+    public ServiceResponse<Request> createtRequest(RequestDTO request){
 
-        Request request1 = mapper.toEntity(request);
-        
-        request1.id = requests.size() + 1;
+        try{
 
-        request1.status = RequestStatus.CREATED;
+            Request request1 = mapper.toEntity(request);
+            
+            request1.id = requests.size() + 1;
+    
+            request1.status = RequestStatus.CREATED;
+    
+            if(requests.add(request1)){
+                return ServiceResponse.success(request1);
+            }
 
-        requests.add(request1);
+            return ServiceResponse.error("Não foi possível criar o chamado.");
 
-        return true;
+        }catch(Exception e){
+            return ServiceResponse.error(e.toString());
+        }
+
     }
 }

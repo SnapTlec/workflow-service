@@ -9,6 +9,7 @@ import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 
 import br.com.workflow.dto.RequestDTO;
+import br.com.workflow.entity.ResponseStatus;
 import br.com.workflow.service.RequestService;
 
 /**
@@ -28,10 +29,12 @@ public class RequestResource {
     @POST 
     public Response createtRequest(RequestDTO req){
 
-        if(service.createtRequest(req))
+        if(ResponseStatus.SUCCESS.equals(service.createtRequest(req).getStatus()))
         {
             return Response.status(Response.Status.CREATED).build();
         }
+
+
 
         return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
 
