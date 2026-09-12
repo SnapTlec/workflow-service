@@ -5,6 +5,7 @@ import java.util.List;
 
 import br.com.workflow.dto.RequestDTO;
 import br.com.workflow.entity.Request;
+import br.com.workflow.entity.RequestStatus;
 import br.com.workflow.mapper.RequestMapper;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
@@ -12,7 +13,8 @@ import jakarta.inject.Inject;
 @ApplicationScoped
 public class RequestService {
 
-    public List<Request> requests = new ArrayList<>();
+    private List<Request> requests = new ArrayList<>();
+    
     @Inject 
     private RequestMapper mapper;
 
@@ -23,9 +25,13 @@ public class RequestService {
     public Boolean createtRequest(RequestDTO request){
 
         Request request1 = mapper.toEntity(request);
+        
+        request1.id = requests.size() + 1;
+
+        request1.status = RequestStatus.CREATED;
 
         requests.add(request1);
-        
+
         return true;
     }
 }
