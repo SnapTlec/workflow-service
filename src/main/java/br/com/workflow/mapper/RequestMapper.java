@@ -5,8 +5,9 @@ import br.com.workflow.entity.Request;
 
 import org.mapstruct.Mapper;
 
-@Mapper
+@Mapper(componentModel = "cdi")
 public interface RequestMapper {
     Request toEntity(RequestDTO request);
     RequestDTO toDTO(Request request);
 }
+
