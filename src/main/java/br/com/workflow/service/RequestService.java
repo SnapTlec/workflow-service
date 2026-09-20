@@ -31,7 +31,7 @@ public class RequestService {
             return ServiceResponse.error(new Message(MessageType.ERROR, "Data inicial não poder ser maior do que a data final"));
         }
 
-        List<Request> requests = requestRepository.consultarRequestS();
+        List<Request> requests = requestRepository.consultarRequestS(requestFilter);
 
         return ServiceResponse.success(requests);
     }

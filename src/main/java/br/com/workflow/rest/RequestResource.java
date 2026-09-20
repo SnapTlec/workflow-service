@@ -56,9 +56,11 @@ public class RequestResource {
             errorMessageList.add(new Message(MessageType.ERROR, "É necessário informar um intervalo de data."));
         }
 
-        if(!status.isEmpty()){
-            if(!RequestStatusService.isValid(status)){
-                errorMessageList.add(new Message(MessageType.ERROR, "Status inválido."));
+        if (status != null && !status.isEmpty()) {
+            if (!RequestStatusService.isValid(status)) {
+                errorMessageList.add(
+                    new Message(MessageType.ERROR, "Status inválido.")
+                );
             }
         }
 
@@ -83,7 +85,9 @@ public class RequestResource {
 
         RequestFilterDTO requestFilterDTO = new RequestFilterDTO();
         
-        requestFilterDTO.status = RequestStatus.valueOf(status);
+        if (status != null && !status.isEmpty()) {
+            requestFilterDTO.status = RequestStatus.valueOf(status);
+        }
         requestFilterDTO.createdBy = createdBy;
         requestFilterDTO.createdFrom = createdFrom;
         requestFilterDTO.createdTo = createdTo;
