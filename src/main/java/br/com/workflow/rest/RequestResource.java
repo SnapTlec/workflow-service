@@ -1,6 +1,7 @@
 package br.com.workflow.rest;
 
 import jakarta.inject.Inject;
+import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.DefaultValue;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.POST;
@@ -11,6 +12,7 @@ import jakarta.ws.rs.QueryParam;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 
+import java.net.URI;
 import java.text.MessageFormat;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -127,15 +129,27 @@ public class RequestResource {
         }
     }
 
-    @POST 
+    @POST
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
     public Response createtRequest(RequestDTO req){
 
-        if(ResponseStatus.SUCCESS.equals(service.createtRequest(req).getStatus()))
-        {
-            return Response.status(Response.Status.CREATED).build();
-        }
+        try{
 
-        return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
+            ServiceResponse<Request> serviceResponse = service.createtRequest(req);
+
+            if(ResponseStatus.SUCCESS.equals(serviceResponse.getStatus()))
+            {
+                URI location = URI.create("request/" + serviceResponse.getData().getId());
+                
+                return Response.status(Response.Status.CREATED).location(location).entity(serviceResponse.getData()).build();
+            }
+            
+            return Response.status(Response.Status.BAD_REQUEST).entity(serviceResponse).build();
+
+        }catch(Exception e){
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(e).build();
+        }
 
     }
 }
