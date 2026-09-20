@@ -3,7 +3,7 @@ package br.com.workflow.repository;
 
 import java.util.List;
 
-import br.com.workflow.dto.RequestDTO;
+import br.com.workflow.dto.RequestCreateDTO;
 import br.com.workflow.dto.RequestFilterDTO;
 import br.com.workflow.entity.Message;
 import br.com.workflow.entity.MessageType;

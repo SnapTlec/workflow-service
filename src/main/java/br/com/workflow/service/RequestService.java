@@ -3,7 +3,7 @@ package br.com.workflow.service;
 import java.util.ArrayList;
 import java.util.List;
 
-import br.com.workflow.dto.RequestDTO;
+import br.com.workflow.dto.RequestCreateDTO;
 import br.com.workflow.dto.RequestFilterDTO;
 import br.com.workflow.entity.Message;
 import br.com.workflow.entity.MessageType;
@@ -37,7 +37,7 @@ public class RequestService {
         return ServiceResponse.success(requests);
     }
 
-    public ServiceResponse<Request> createtRequest(RequestDTO requestDTO){
+    public ServiceResponse<Request> createtRequest(RequestCreateDTO requestDTO){
 
         try{
             

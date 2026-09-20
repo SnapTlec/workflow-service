@@ -14,12 +14,11 @@ import jakarta.ws.rs.core.Response;
 
 import java.net.URI;
 import java.text.MessageFormat;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import br.com.workflow.dto.RequestDTO;
+import br.com.workflow.dto.RequestCreateDTO;
 import br.com.workflow.dto.RequestFilterDTO;
 import br.com.workflow.entity.Message;
 import br.com.workflow.entity.MessageType;
@@ -132,7 +131,7 @@ public class RequestResource {
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response createtRequest(RequestDTO req){
+    public Response createtRequest(RequestCreateDTO req){
 
         try{
 
