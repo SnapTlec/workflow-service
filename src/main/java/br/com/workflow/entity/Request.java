@@ -1,6 +1,7 @@
 package br.com.workflow.entity;
 
 import java.time.LocalDateTime;
+import java.util.Date;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -32,7 +33,7 @@ public class Request {
     private String createdBy;
 
     @Column(name = "CREATEDAT")
-    private LocalDateTime createdAt;
+    private Date createdAt;
 
     public void setId(int id) {
         this.id = id;
@@ -54,7 +55,7 @@ public class Request {
         this.createdBy = createdBy;
     }
 
-    public void setCreatedAt(LocalDateTime createdAt) {
+    public void setCreatedAt(Date createdAt) {
         this.createdAt = createdAt;
     }
 
@@ -78,7 +79,7 @@ public class Request {
         return createdBy;
     }
 
-    public LocalDateTime getCreatedAt() {
+    public Date getCreatedAt() {
         return createdAt;
     }
 }
