@@ -2,16 +2,23 @@ package br.com.workflow.repository;
 
 
 import java.util.List;
+
+import br.com.workflow.dto.RequestCreateDTO;
 import br.com.workflow.dto.RequestFilterDTO;
+import br.com.workflow.entity.Message;
+import br.com.workflow.entity.MessageType;
 import br.com.workflow.entity.Request;
+import br.com.workflow.entity.ServiceResponse;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.TypedQuery;
+import jakarta.transaction.Transactional;
 
 
 @ApplicationScoped
 public class RequestRepository {
+    
     @PersistenceContext(unitName = "workflow")
     EntityManager em;
 
@@ -55,7 +62,20 @@ public class RequestRepository {
         
         
         return query.getResultList();
+    }
+
+    @Transactional 
+    public ServiceResponse<Request> criarRequest(Request request){
+        try{
+            
+            em.persist(request);
+
+            return ServiceResponse.success(request, new Message(MessageType.SUCCESS, "Chamado gerado com sucesso."));
+        }catch(Exception e){
+            return ServiceResponse.error(new Message(MessageType.ERROR, e.getMessage()));
         }
+
+    }
         
         
 }

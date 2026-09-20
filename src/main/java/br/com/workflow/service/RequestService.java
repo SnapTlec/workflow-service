@@ -3,12 +3,13 @@ package br.com.workflow.service;
 import java.util.ArrayList;
 import java.util.List;
 
-import br.com.workflow.dto.RequestDTO;
+import br.com.workflow.dto.RequestCreateDTO;
 import br.com.workflow.dto.RequestFilterDTO;
 import br.com.workflow.entity.Message;
 import br.com.workflow.entity.MessageType;
 import br.com.workflow.entity.Request;
 import br.com.workflow.entity.RequestStatus;
+import br.com.workflow.entity.ResponseStatus;
 import br.com.workflow.entity.ServiceResponse;
 import br.com.workflow.mapper.RequestMapper;
 import br.com.workflow.repository.RequestRepository;
@@ -36,10 +37,22 @@ public class RequestService {
         return ServiceResponse.success(requests);
     }
 
-    public ServiceResponse<Request> createtRequest(RequestDTO request){
+    public ServiceResponse<Request> createtRequest(RequestCreateDTO requestDTO){
 
         try{
-            return ServiceResponse.error(new Message(MessageType.ERROR, "Não foi possível criar o chamado."));
+            
+            Request request = mapper.toEntity(requestDTO);
+
+            request.setStatus(RequestStatus.CREATED);
+
+            ServiceResponse<Request> serviceResponse = requestRepository.criarRequest(request);
+
+            if(serviceResponse.getStatus().equals(ResponseStatus.SUCCESS)){
+                
+                return serviceResponse;
+
+            }
+            return ServiceResponse.error(serviceResponse.getMessages());
 
         }catch(Exception e){
             return ServiceResponse.error(new Message(MessageType.ERROR, e.toString()));
