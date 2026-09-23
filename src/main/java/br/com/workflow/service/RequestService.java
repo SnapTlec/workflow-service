@@ -1,62 +1,69 @@
 package br.com.workflow.service;
 
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
-import br.com.workflow.dto.RequestCreateDTO;
-import br.com.workflow.dto.RequestFilterDTO;
-import br.com.workflow.entity.Message;
-import br.com.workflow.entity.MessageType;
+import br.com.workflow.dto.Request.Input.RequestCreateDTO;
+import br.com.workflow.dto.Request.Output.RequestDTO;
+import br.com.workflow.dto.Request.Output.RequestSummaryDTO;
 import br.com.workflow.entity.Request;
 import br.com.workflow.entity.RequestStatus;
-import br.com.workflow.entity.ResponseStatus;
-import br.com.workflow.entity.ServiceResponse;
+import br.com.workflow.entity.User;
 import br.com.workflow.mapper.RequestMapper;
-import br.com.workflow.repository.RequestRepository;
+import br.com.workflow.repository.Interface.IRequestRepository;
+import br.com.workflow.repository.Interface.IUserRepository;
+import br.com.workflow.service.Interface.IRequestService;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
+import jakarta.transaction.Transactional;
 
 @ApplicationScoped
-public class RequestService {
+public class RequestService implements IRequestService {
     
     @Inject 
-    private RequestMapper mapper;
+    private IRequestRepository requestRepository;
 
-    @Inject
-    private  RequestRepository requestRepository;
+    @Inject 
+    private IUserRepository userRepository;
 
-    public ServiceResponse<List<Request>> getRequests(RequestFilterDTO requestFilter){
-        
-        if(requestFilter.createdFrom != null && requestFilter.createdTo != null && requestFilter.createdFrom.after(requestFilter.createdTo))
-        {
-            return ServiceResponse.error(new Message(MessageType.ERROR, "Data inicial não poder ser maior do que a data final"));
-        }
+    @Inject 
+    private RequestMapper requestMapper;
 
-        List<Request> requests = requestRepository.consultarRequestS(requestFilter);
-
-        return ServiceResponse.success(requests);
+    @Override
+    @Transactional
+    public List<RequestSummaryDTO> getRequests() {
+        List<Request> requests = requestRepository.findAll();
+        return requestMapper.toSummaryDtoList(requests);
     }
 
-    public ServiceResponse<Request> createtRequest(RequestCreateDTO requestDTO){
+    @Override
+    @Transactional
+    public RequestDTO getRequestById(Integer id) {
+        Request request = requestRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Chamado não encontrado: " + id));
+        return requestMapper.toDto(request);
+    }
 
-        try{
-            
-            Request request = mapper.toEntity(requestDTO);
+    @Override
+    @Transactional
+    public RequestDTO createRequest(RequestCreateDTO dto) {
+        User creator = userRepository.findByLogin(dto.getCreatedBy())
+                .orElseThrow(() -> new RuntimeException("Usuário criador não encontrado: " + dto.getCreatedBy()));
 
-            request.setStatus(RequestStatus.CREATED);
-
-            ServiceResponse<Request> serviceResponse = requestRepository.criarRequest(request);
-
-            if(serviceResponse.getStatus().equals(ResponseStatus.SUCCESS)){
-                
-                return serviceResponse;
-
-            }
-            return ServiceResponse.error(serviceResponse.getMessages());
-
-        }catch(Exception e){
-            return ServiceResponse.error(new Message(MessageType.ERROR, e.toString()));
+        List<User> additionalRequesters = Collections.emptyList();
+        if (dto.getAdditionalRequesterIds() != null && !dto.getAdditionalRequesterIds().isEmpty()) {
+            additionalRequesters = userRepository.findAllById(dto.getAdditionalRequesterIds());
         }
 
+        Request request = Request.builder()
+                .title(dto.getTitle())
+                .description(dto.getDescription())
+                .status(RequestStatus.CREATED)
+                .createdBy(creator)
+                .additionalRequesters(additionalRequesters)
+                .build();
+
+        Request savedRequest = requestRepository.save(request);
+        return requestMapper.toDto(savedRequest);
     }
 }
